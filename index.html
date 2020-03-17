@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <!--↓モバイル対応でのおまじない-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>-->
-    <script src="js/chart.min.js"></script>
+    <script src="https://koukita.github.io/covid19_chart/js/chart.min.js"></script>
     <style>
       /* 数値の描画エリア */
       #txtFlexbox{
@@ -20,7 +19,7 @@
         margin:  1px;              /* 外側の余白 */
         border-radius:  5px;        /* 角丸指定 */
         line-height: 1.3em;
-        height: 100%;
+        min-height: 85px;
       }
       .txtItem2{
         padding: 3px;
@@ -28,7 +27,7 @@
         margin:  2px;              /* 外側の余白 */
         border-radius:  2px;        /* 角丸指定 */
         line-height: 1.3em;
-        height: 100%;
+        min-height: 65px;
       }
       .txtItem3{
         padding: 3px;
@@ -36,7 +35,7 @@
         margin:  1px;              /* 外側の余白 */
         border-radius:  5px;        /* 角丸指定 */
         line-height: 1.3em;
-        height: 100%;
+        min-height: 45px;
       }
 
       .txtItem:nth-child(1) {
@@ -67,12 +66,12 @@
       #chartBox{
         /* display: flex; */
         display: block;
-        background:rgb(226, 255, 255);
-        width: 100%;
+        background:rgb(246, 255, 255);
+        width: 700px;
         height:100%;
       }
       .wrap{
-        width: 80%;
+        width: 95%;
         margin-top: 20px;
         padding:0% 2%;
       }
@@ -81,7 +80,7 @@
     @media screen and (max-width: 700px) {
       #chartBox{
         display: block;
-       background:rgb(252, 251, 234);
+       background:rgb(255, 254, 242);
        width: 100%;
     }
     .wrap{
@@ -91,12 +90,6 @@
     }
 
   </style>
-    <!-- <script src="js/chart.min.js"></script>-->
-
-       <!--<style>
-       #wrap{ width:1000px; height:500px; margin:0 auto; }
-       canvas#myChart{ width: 100%; height:100%; background:#ffe; }
-    </style>-->
     <script>
       var title =[];
       main();
@@ -109,8 +102,6 @@
         req.onload = function() {
           // 2) CSVデータ変換の呼び出し
           data = csv2Array(req.responseText);
-          //　文字コードをShift-jisからUTF-8に変換
-          //var data_utf8 = Encoding.convert(data,'UNICODE', 'SJIS');
           // 3) chart.jsデータ準備、4) chart.js描画の呼び出し
           drawBarChart(data);
         }
@@ -163,17 +154,19 @@
         }; // --------------
 
         //数字のテキストをHTMLに描画
-        document.getElementById('kensa_ruikei').innerHTML = '検査人数<br><font size="4">'+ totalData1 + '</font>人<br>('+ zouData1+')' 
-        document.getElementById('yousei_ruikei').innerHTML = '陽性累計<br><font size="4">'+ totalData2 + '</font>人<br>('+ zouData2+')' 
-        document.getElementById('kanjya_ruikei').innerHTML = '現在患者数<br><font size="4">'+ totalData3 + '</font>人<br>('+ zouData3+')' 
-        document.getElementById('shibou_ruikei').innerHTML = '死亡累計<br><font size="4">'+ totalData4 + '</font>人<br>('+ zouData4+')' 
-        document.getElementById('insei_ruikei').innerHTML = '陰性確認済累計<br><font size="4">'+ totalData5 + '</font>人<br>('+ zouData5+')' 
-        document.getElementById('keishou_ruikei').innerHTML = '軽症・中等症<br><font size="4">'+ totalData6 + '</font>人<br>('+ zouData6+')' 
-        document.getElementById('jyushou_ruikei').innerHTML = '重症<br><font size="4">'+ totalData7 + '</font>人<br>('+ zouData7+')' 
+        document.getElementById('kensa_ruikei').innerHTML = '検査人数<br><font size="5">'+ totalData1 + '</font>人<br>('+ zouData1+')' 
+        document.getElementById('yousei_ruikei').innerHTML = '陽性累計<br><font size="5">'+ totalData2 + '</font>人<br>('+ zouData2+')' 
+        document.getElementById('kanjya_ruikei').innerHTML = '現在患者数<br><font size="5">'+ totalData3 + '</font>人<br>('+ zouData3+')' 
+        document.getElementById('shibou_ruikei').innerHTML = '死亡累計<br><font size="5">'+ totalData4 + '</font>人<br>('+ zouData4+')' 
+        document.getElementById('insei_ruikei').innerHTML = '陰性確認済累計<br><font size="5">'+ totalData5 + '</font>人<br>('+ zouData5+')' 
+        document.getElementById('keishou_ruikei').innerHTML = '軽症・中等症<br><font size="5">'+ totalData6 + '</font>人<br>('+ zouData6+')' 
+        document.getElementById('jyushou_ruikei').innerHTML = '重症<br><font size="5">'+ totalData7 + '</font>人<br>('+ zouData7+')' 
 
         // 4)chart.jsで描画
+        //１つ目のグラフの描画
         var ctx = document.getElementById("myChart").getContext("2d");
         if (window.parent.screen.width<=700){
+          //高さは横幅に対しての比率のようなので、表示する幅によって調整する
           ctx.canvas.height = 300; //スマホの場合　グラフの高さを設定
         }else{
           ctx.canvas.height = 200; //パソコンの場合　グラフの高さを設定
@@ -184,14 +177,14 @@
             labels: tmpLabels, // 横軸ラベル
             datasets: [
               //折れ線グラフを適用
-              { fill:false, pointRadius: 3, lineTension: 0, borderColor:"rgba(0,0,0,1)", label:'現在患者数', data:tmpData3 },
-              { fill:false, lineTension: 0, borderColor:"rgba(255,0,0,1)", label:'死亡累計', data:tmpData4 },
-              { fill:false, lineTension: 0, borderColor:"rgba(30,140,240,1)", label:'陰性確認済累計', data:tmpData5 },
-              { fill:false, lineTension: 0, borderColor:"rgba(0,180,80,1)", label:'陽性累計', data:tmpData2 },
+              { fill:false, pointRadius: 3, lineTension: 0, borderColor:"rgba(255, 137, 2,1)", label:'現在患者数', data:tmpData3 },
+              { fill:false, pointRadius: 3, lineTension: 0, borderColor:"rgba(255,0,0,1)", label:'死亡累計', data:tmpData4 },
+              { fill:false, pointRadius: 3, lineTension: 0, borderColor:"rgba(0,0,0,1)", label:'陰性確認済累計', data:tmpData5 },
+              { fill:false, pointRadius: 3, lineTension: 0, borderColor:"rgba(0,180,80,1)", label:'陽性累計', data:tmpData2 },
 
             ]
           },
-          options: {
+          options: {                        //１つ目のグラフのオプション
             title: {
               display: true,            
               text: '道内の患者等の発生状況',
@@ -218,8 +211,10 @@
           }
         });
 
+        //２つ目のグラフの描画
         var ctx2 = document.getElementById("myChart2").getContext("2d");
         if (window.parent.screen.width<=700){
+          //高さは横幅に対しての比率のようなので、表示する幅によって調整する
           ctx2.canvas.height = 300; //スマホの場合　グラフの高さを設定
         }else{
           ctx2.canvas.height = 200; //パソコンの場合　グラフの高さを設定
@@ -234,7 +229,7 @@
               { label:'日陽性人数', data: tmpData1, backgroundColor:"rgba(0,180,80,1.0)",stack:0 },
             ]
           },
-          options: {
+          options: {                        //２つ目のグラフのオプション
             title: {
               display: true,            
               text: '日毎の陽性患者数',
@@ -265,38 +260,43 @@
     </script>
 </head>
 <body>
-
+  <!--数値の表示部分-->
   <div id="txtFlexbox">
     <div class="txtItem">
-      <div id="kensa_ruikei"></div>
+      <div id="kensa_ruikei"></div>    <!--検査数-->
     </div>
     <div class="txtItem">
-      <div id="yousei_ruikei"></div>
+      <div id="yousei_ruikei"></div>    <!--陽性患者数-->
       <div class="txtItem2">
-        <div id="kanjya_ruikei"></div>
+        <div id="kanjya_ruikei"></div>    <!--現在患者数-->
         <div class="txtItem3">
-          <div id="keishou_ruikei"></div>
+          <div id="keishou_ruikei"></div>    <!--軽症・中等症数-->
         </div>
         <div class="txtItem3">
-          <div id="jyushou_ruikei"></div>
+          <div id="jyushou_ruikei"></div>    <!--重症数-->
         </div>
       </div>
       <div class="txtItem2">
-        <div id="shibou_ruikei"></div>
+        <div id="shibou_ruikei"></div>    <!--死亡数-->
       </div>
       <div class="txtItem2">
-          <div id="insei_ruikei"></div>
+          <div id="insei_ruikei"></div>    <!--陰性確認数-->
       </div>
     </div>
   </div>
-    <div id="chartBox">
-      <div class="wrap">
-        <canvas id="myChart"></canvas>
-      </div>
-      <div class="wrap">
-        <canvas id="myChart2"></canvas>
-      </div>
+  <!--データCSVファイルのURLを入力-->
+  <a href="data/covid19_data.csv">データのCSVファイルをダウンロード</a>
+  <!--グラフの表示エリア-->
+  <div id="chartBox">
+    <div class="wrap">
+      <canvas id="myChart"></canvas>    <!--１つ目のグラフの表示エリア-->
+        ※1月29日から2月12日までは、データに変化がないため省略しています。
     </div>
+    <div class="wrap">
+      <canvas id="myChart2"></canvas>   <!--２つ目のグラフの表示エリア-->
+        ※1月29日から2月12日までは、データに変化がないため省略しています。
+    </div>
+  </div>
     
 </body>
 </html>
