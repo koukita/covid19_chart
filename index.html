@@ -97,7 +97,7 @@
       function main() {
         // 1) ajaxでCSVファイルをロード
         var req = new XMLHttpRequest();
-        var filePath = 'data/covid19_data.csv';              //  読込ファイル名
+        var filePath = 'https://www.harp.lg.jp/opendata/dataset/1369/resource/2853/covid19_data.csv';              //  読込ファイル名
         req.open("GET", filePath, true);
         req.onload = function() {
           // 2) CSVデータ変換の呼び出し
@@ -285,7 +285,7 @@
     </div>
   </div>
   <!--データCSVファイルのURLを入力-->
-  <a href="data/covid19_data.csv">データのCSVファイルをダウンロード</a>
+  <a href="https://www.harp.lg.jp/opendata/dataset/1369/resource/2853/covid19_data.csv">データのCSVファイルをダウンロード</a>
   <!--グラフの表示エリア-->
   <div id="chartBox">
     <div class="wrap">
